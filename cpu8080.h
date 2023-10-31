@@ -1,8 +1,6 @@
 #ifndef CPU8080_H
 #define CPU8080_H
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
 
