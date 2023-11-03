@@ -135,9 +135,14 @@ int main(int argc, char* argv[])
             {
                 switch (e.key.keysym.sym)
                 {
-                    case SDLK_SPACE:
+                    case SDLK_RSHIFT:
                     {
                         state->portsin[1] |= 0b00000100;    // P1 Start
+                        break;
+                    }
+                    case SDLK_LSHIFT:
+                    {
+                        state->portsin[1] |= 0b00000010;    // P2 Start
                         break;
                     }
                     case SDLK_RETURN:
@@ -145,7 +150,7 @@ int main(int argc, char* argv[])
                         state->portsin[1] |= 0b00000001;    // Insert Coin
                         break;
                     }
-                    case SDLK_x:
+                    case SDLK_RCTRL:
                     {
                         state->portsin[1] |= 0b00010000;    // P1 Shoot
                         break;
@@ -160,6 +165,21 @@ int main(int argc, char* argv[])
                         state->portsin[1] |= 0b01000000;    // P1 Right
                         break;
                     }
+                    case SDLK_LCTRL:
+                    {
+                        state->portsin[2] |= 0b00010000;    // P2 Shoot
+                        break;
+                    }
+                    case SDLK_a:
+                    {
+                        state->portsin[2] |= 0b00100000;    // P2 Left
+                        break;
+                    }
+                    case SDLK_d:
+                    {
+                        state->portsin[2] |= 0b01000000;    // P2 Right
+                        break;
+                    }
                     case SDLK_ESCAPE:
                     {
                         keep_window_open = 0;
@@ -171,9 +191,14 @@ int main(int argc, char* argv[])
             {
                 switch (e.key.keysym.sym)
                 {
-                    case SDLK_SPACE:
+                    case SDLK_RSHIFT:
                     {
                         state->portsin[1] &= 0b11111011;    // P1 Start
+                        break;
+                    }
+                    case SDLK_LSHIFT:
+                    {
+                        state->portsin[1] &= 0b11111101;    // P2 Start
                         break;
                     }
                     case SDLK_RETURN:
@@ -181,7 +206,7 @@ int main(int argc, char* argv[])
                         state->portsin[1] &= 0b11111110;    // Insert Coin
                         break;
                     }
-                    case SDLK_x:
+                    case SDLK_RCTRL:
                     {
                         state->portsin[1] &= 0b11101111;    // P1 Shoot
                         break;
@@ -194,6 +219,21 @@ int main(int argc, char* argv[])
                     case SDLK_RIGHT:
                     {
                         state->portsin[1] &= 0b10111111;    // P1 Right
+                        break;
+                    }
+                    case SDLK_LCTRL:
+                    {
+                        state->portsin[2] &= 0b11101111;    // P2 Shoot
+                        break;
+                    }
+                    case SDLK_a:
+                    {
+                        state->portsin[2] &= 0b11011111;    // P2 Left
+                        break;
+                    }
+                    case SDLK_d:
+                    {
+                        state->portsin[2] &= 0b10111111;    // P2 Right
                         break;
                     }
                 }
