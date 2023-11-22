@@ -48,10 +48,10 @@ void set_flags_logic(State8080* state)
     state->rf.c = 0;
 }
 
-void add8(State8080* state, uint8_t a, uint8_t b)
+void add8(State8080* state, uint8_t b)
 {
-    uint16_t res = a + b;
-    state->rf.ac = ((((a & 0xf) + (b & 0xf)) & 0xf0) != 0);
+    uint16_t res = state->ra + b;
+    state->rf.ac = ((((state->ra & 0xf) + (b & 0xf)) & 0xf0) != 0);
     set_flags_16_cy(state, res);
     state->ra = res & 0xff;
 }
@@ -783,82 +783,82 @@ void Emulate8080Op(State8080* state)
     }
     case 0x80:                               // ADD B
     {
-        add8(state, state->ra, state->rb);
+        add8(state, state->rb);
         break;
     }
     case 0x81:                               // ADD C
     {
-        add8(state, state->ra, state->rc);
+        add8(state, state->rc);
         break;
     }
     case 0x82:                               // ADD D
     {
-        add8(state, state->ra, state->rd);
+        add8(state, state->rd);
         break;
     }
     case 0x83:                               // ADD E
     {
-        add8(state, state->ra, state->re);
+        add8(state, state->re);
         break;
     }
     case 0x84:                               // ADD H
     {
-        add8(state, state->ra, state->rh);
+        add8(state, state->rh);
         break;
     }
     case 0x85:                               // ADD L
     {
-        add8(state, state->ra, state->rl);
+        add8(state, state->rl);
         break;
     }
     case 0x86:                               // ADD M
     {
-        add8(state, state->ra, state->memory[state->rhl]);
+        add8(state, state->memory[state->rhl]);
         break;
     }
     case 0x87:                               // ADD A
     {
-        add8(state, state->ra, state->ra);
+        add8(state, state->ra);
         break;
     }
     case 0x88:                               // ADC B
     {
-        add8(state, state->ra, state->rb + state->rf.c);
+        add8(state, state->rb + state->rf.c);
         break;
     }
     case 0x89:                               // ADC C
     {
-        add8(state, state->ra, state->rc + state->rf.c);
+        add8(state, state->rc + state->rf.c);
         break;
     }
     case 0x8A:                               // ADC D
     {
-        add8(state, state->ra, state->rd + state->rf.c);
+        add8(state, state->rd + state->rf.c);
         break;
     }
     case 0x8B:                               // ADC E
     {
-        add8(state, state->ra, state->re + state->rf.c);
+        add8(state, state->re + state->rf.c);
         break;
     }
     case 0x8C:                               // ADC H
     {
-        add8(state, state->ra, state->rh + state->rf.c);
+        add8(state, state->rh + state->rf.c);
         break;
     }
     case 0x8D:                               // ADC L
     {
-        add8(state, state->ra, state->rl + state->rf.c);
+        add8(state, state->rl + state->rf.c);
         break;
     }
     case 0x8E:                               // ADC M
     {
-        add8(state, state->ra, state->memory[state->rhl] + state->rf.c);
+        add8(state, state->memory[state->rhl] + state->rf.c);
         break;
     }
     case 0x8F:                               // ADC A
     {
-        add8(state, state->ra, state->ra + state->rf.c);
+        add8(state, state->ra + state->rf.c);
         break;
     }
     case 0x90:                               // SUB B
@@ -1175,7 +1175,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xC6:                               // ADI byte
     {
-        add8(state, state->ra, opcode[1]);
+        add8(state, opcode[1]);
         state->pc +=1;
         break;
     }
@@ -1234,7 +1234,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xCE:                               // ACI byte
     {
-        add8(state, state->ra, opcode[1] + state->rf.c);
+        add8(state, opcode[1] + state->rf.c);
         state->pc += 1;
         break;
     }

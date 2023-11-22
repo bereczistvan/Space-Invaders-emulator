@@ -58,7 +58,7 @@ void set_flags_16_cy(State8080* state, uint16_t res);
 
 void set_flags_logic(State8080* state);
 
-void add8(State8080* state, uint8_t a, uint8_t b);
+void add8(State8080* state, uint8_t b);
 
 void sub8(State8080* state, uint8_t b);
 
