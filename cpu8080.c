@@ -87,6 +87,13 @@ void dcr(State8080* state, uint8_t* reg)
     *reg = res;
 }
 
+void push(State8080* state, uint16_t reg)
+{
+    state->memory[state->sp - 1] = reg >> 8;
+    state->memory[state->sp - 2] = reg & 0xff;
+    state->sp = state->sp - 2;
+}
+
 void UnimplementedInstruction(State8080* state)
 {
 //    unsigned char* opcode = &state->memory[state->pc - 1];
@@ -1153,25 +1160,17 @@ void Emulate8080Op(State8080* state)
     }
     case 0xC4:                               // CNZ addr
     {
+        state->pc +=2;
         if (!state->rf.z)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
     case 0xC5:                               // PUSH B
     {
-        state->memory[state->sp - 1] = state->rb;
-        state->memory[state->sp - 2] = state->rc;
-        state->sp = state->sp - 2;
+        push(state, state->rbc);
         break;
     }
     case 0xC6:                               // ADI byte
@@ -1182,9 +1181,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xC7:                               // RST 0
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x0;
         break;
     }
@@ -1220,26 +1217,18 @@ void Emulate8080Op(State8080* state)
         break;
     case 0xCC:                               // CZ addr
     {
+        state->pc +=2;
         if (state->rf.z)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
     case 0xCD:                               // CALL addr
     {
-        uint16_t res = state->pc + 2;
-        state->memory[state->sp - 1] = res >> 8;
-        state->memory[state->sp - 2] = res & 0xff;
-        state->sp = state->sp - 2;
+        state->pc += 2;
+        push(state, state->pc);
         state->pc = (opcode[2] << 8) | opcode[1];
         break;
     }
@@ -1251,9 +1240,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xCF:                               // RST 1
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x8;
         break;
     }
@@ -1305,25 +1292,17 @@ void Emulate8080Op(State8080* state)
         }
     case 0xD4:                               // CNC addr
     {
+        state->pc +=2;
         if (!state->rf.c)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
     case 0xD5:                               // PUSH D
     {
-        state->memory[state->sp - 1] = state->rd;
-        state->memory[state->sp - 2] = state->re;
-        state->sp = state->sp - 2;
+        push(state, state->rde);
         break;
     }
     case 0xD6:                               // SUI byte
@@ -1334,9 +1313,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xD7:                               // RST 2
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x10;
         break;
     }
@@ -1380,17 +1357,11 @@ void Emulate8080Op(State8080* state)
     }
     case 0xDC:                               // CC addr
     {
+        state->pc +=2;
         if (state->rf.c)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
@@ -1405,9 +1376,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xDF:                               // RST 3
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x18;
         break;
     }
@@ -1451,25 +1420,17 @@ void Emulate8080Op(State8080* state)
     }
     case 0xE4:                               // CPO addr
     {
+        state->pc +=2;
         if (!state->rf.p)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
     case 0xE5:                               // PUSH H
     {
-        state->memory[state->sp - 1] = state->rh;
-        state->memory[state->sp - 2] = state->rl;
-        state->sp -= 2;
+        push(state, state->rhl);
         break;
     }
     case 0xE6:                               // ANI byte
@@ -1481,9 +1442,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xE7:                               // RST 4
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x20;
         break;
     }
@@ -1522,17 +1481,11 @@ void Emulate8080Op(State8080* state)
     }
     case 0xEC:                               // CPE
     {
+        state->pc +=2;
         if (state->rf.p)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
@@ -1548,9 +1501,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xEF:                               // RST 5
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x28;
         break;
     }
@@ -1589,25 +1540,17 @@ void Emulate8080Op(State8080* state)
     }
     case 0xF4:                               // CP addr
     {
+        state->pc +=2;
         if (!state->rf.s)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
     case 0xF5:                               // PUSH PSW
     {
-        state->memory[state->sp - 1] = state->ra;
-        state->memory[state->sp - 2] = (state->psw & 0xff);
-        state->sp = state->sp - 2;
+        push(state, state->psw);
         break;
     }
     case 0xF6:                               // ORI byte
@@ -1619,9 +1562,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xF7:                               // RST 6
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x30;
         break;
     }
@@ -1658,17 +1599,11 @@ void Emulate8080Op(State8080* state)
     }
     case 0xFC:                               // CM addr
     {
+        state->pc +=2;
         if (state->rf.s)
         {
-            uint16_t res = state->pc + 2;
-            state->memory[state->sp - 1] = res >> 8;
-            state->memory[state->sp - 2] = res & 0xff;
-            state->sp = state->sp - 2;
+            push(state, state->pc);
             state->pc = (opcode[2] << 8) | opcode[1];
-        }
-        else
-        {
-            state->pc +=2;
         }
         break;
     }
@@ -1683,9 +1618,7 @@ void Emulate8080Op(State8080* state)
     }
     case 0xFF:                               // RST 7
     {
-        state->memory[state->sp - 1] = state->pc >> 8;
-        state->memory[state->sp - 2] = state->pc & 0xff;
-        state->sp = state->sp - 2;
+        push(state, state->pc);
         state->pc = 0x38;
         break;
     }
