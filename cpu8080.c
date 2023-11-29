@@ -11,8 +11,6 @@ State8080* Init8080(void)
     state->memory = malloc(0x10000);
     state->portsin = calloc(1, 0xff);
     state->portsout = calloc(1, 0xff);
-    state->portsin[0] |= 0b00001110;    // Set always 1 bits
-    state->portsin[1] |= 0b00001000;    // Set always 1 bits
     return state;
 }
 
@@ -92,6 +90,12 @@ void push(State8080* state, uint16_t reg)
     state->memory[state->sp - 1] = reg >> 8;
     state->memory[state->sp - 2] = reg & 0xff;
     state->sp = state->sp - 2;
+}
+
+void pop(State8080* state, uint16_t* reg)
+{
+    *reg = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
+    state->sp += 2;
 }
 
 void UnimplementedInstruction(State8080* state)
@@ -1129,16 +1133,13 @@ void Emulate8080Op(State8080* state)
     {
         if (!state->rf.z)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
     case 0xC1:                               // POP B
     {
-        state->rc = state->memory[state->sp];
-        state->rb = state->memory[state->sp + 1];
-        state->sp += 2;
+        pop(state, &state->rbc);
         break;
     }
     case 0xC2:                               // JNZ addr
@@ -1189,15 +1190,13 @@ void Emulate8080Op(State8080* state)
     {
         if (state->rf.z)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
     case 0xC9:                               // RET
     {
-        state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-        state->sp += 2;
+        pop(state, &state->pc);
         break;
     }
     case 0xCA:                               // JZ addr
@@ -1248,16 +1247,13 @@ void Emulate8080Op(State8080* state)
     {
         if (!state->rf.c)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
     case 0xD1:                               // POP D
     {
-        state->re = state->memory[state->sp];
-        state->rd = state->memory[state->sp + 1];
-        state->sp += 2;
+        pop(state, &state->rde);
         break;
     }
     case 0xD2:                               // JNC addr
@@ -1321,8 +1317,7 @@ void Emulate8080Op(State8080* state)
     {
         if (state->rf.c)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
@@ -1384,16 +1379,13 @@ void Emulate8080Op(State8080* state)
     {
         if (!state->rf.p)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
     case 0xE1:                               // POP H
     {
-        state->rl = state->memory[state->sp];
-        state->rh = state->memory[state->sp + 1];
-        state->sp += 2;
+        pop(state, &state->rhl);
         break;
     }
     case 0xE2:                               // JPO addr
@@ -1450,8 +1442,7 @@ void Emulate8080Op(State8080* state)
     {
         if (state->rf.p)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
@@ -1509,16 +1500,13 @@ void Emulate8080Op(State8080* state)
     {
         if (!state->rf.s)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }
     case 0xF1:                               // POP PSW
     {
-        state->psw = (state->memory[state->sp] & 0xff);
-        state->ra = state->memory[state->sp + 1];
-        state->sp += 2;
+        pop(state, &state->psw);
         break;
     }
     case 0xF2:                               // JP addr
@@ -1570,8 +1558,7 @@ void Emulate8080Op(State8080* state)
     {
         if (state->rf.s)
         {
-            state->pc = (state->memory[state->sp + 1] << 8) | state->memory[state->sp];
-            state->sp += 2;
+            pop(state, &state->pc);
         }
         break;
     }

@@ -70,6 +70,8 @@ void dcr(State8080* state, uint8_t* reg);
 
 void push(State8080* state, uint16_t reg);
 
+void pop(State8080* state, uint16_t* reg);
+
 void UnimplementedInstruction(State8080* state);
 
 State8080* Init8080(void);
