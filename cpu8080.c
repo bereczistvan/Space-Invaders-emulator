@@ -2,8 +2,32 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "cpu8080.h"
+
+void ReadFileIntoMemoryAt(State8080* state, const char* filename, uint32_t offset)
+{
+    FILE* f = fopen(filename,"rb");
+    if (f==NULL)
+    {
+        /*char* msg = "Could not open ";
+        char* error_msg = malloc(strlen(msg) + strlen(filename) + 1);
+        strcpy(error_msg, msg);
+        strcat(error_msg, filename);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error_msg, NULL);
+        free(error_msg);*/
+        exit(1);
+    }
+
+    fseek(f, 0L, SEEK_END);
+    int fsize = ftell(f);
+    fseek(f, 0L, SEEK_SET);
+
+    uint8_t* buffer = &state->memory[offset];
+    fread(buffer, fsize, 1, f);
+    fclose(f);
+}
 
 State8080* Init8080(void)
 {

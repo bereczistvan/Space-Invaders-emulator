@@ -74,6 +74,8 @@ void pop(State8080* state, uint16_t* reg);
 
 void UnimplementedInstruction(State8080* state);
 
+void ReadFileIntoMemoryAt(State8080* state, const char* filename, uint32_t offset);
+
 State8080* Init8080(void);
 
 void Emulate8080Op(State8080* state);
