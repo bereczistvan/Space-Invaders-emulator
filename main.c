@@ -17,12 +17,15 @@ int main(int argc, char* argv[])
 
     while (screen->keep_open)
     {
-        Emulate8080Op(state);
-        
         HandleInput(state, screen);
+
+        Emulate8080Op(state);
         
         RenderScreen(state, screen);
     }
+
+    Delete8080(state);
+    DeleteScreen(screen);
 
     return 0;
 }

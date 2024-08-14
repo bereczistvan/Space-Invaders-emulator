@@ -78,6 +78,8 @@ void ReadFileIntoMemoryAt(State8080* state, const char* filename, uint32_t offse
 
 State8080* Init8080(void);
 
+void Delete8080(State8080* state);
+
 void Emulate8080Op(State8080* state);
 
 #endif

@@ -1,8 +1,7 @@
 #ifndef MACHINEINVADERS_H
 #define MACHINEINVADERS_H
 
-#include <SDL2/sdl.h>
-
+#include <SDL2/SDL.h>
 #include "cpu8080.h"
 
 typedef struct Screen
@@ -25,6 +24,8 @@ void drawLower(SDL_Renderer* renderer, State8080* state);
 void HandleInput(State8080* state, Screen* screen);
 
 Screen* InitScreen(void);
+
+void DeleteScreen(Screen* screen);
 
 void RenderScreen(State8080* state, Screen* screen);
 

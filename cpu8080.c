@@ -9,7 +9,7 @@
 void ReadFileIntoMemoryAt(State8080* state, const char* filename, uint32_t offset)
 {
     FILE* f = fopen(filename,"rb");
-    if (f==NULL)
+    if (f == NULL)
     {
         /*char* msg = "Could not open ";
         char* error_msg = malloc(strlen(msg) + strlen(filename) + 1);
@@ -36,6 +36,14 @@ State8080* Init8080(void)
     state->portsin = calloc(1, 0xff);
     state->portsout = calloc(1, 0xff);
     return state;
+}
+
+void Delete8080(State8080* state)
+{
+    free(state->portsout);
+    free(state->portsin);
+    free(state->memory);
+    free(state);
 }
 
 bool parity(uint16_t res)

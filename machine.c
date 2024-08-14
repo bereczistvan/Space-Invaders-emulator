@@ -1,8 +1,7 @@
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL2/sdl.h>
 
+#include <SDL2/SDL.h>
 #include "cpu8080.h"
 #include "machine.h"
 
@@ -60,7 +59,8 @@ Screen* InitScreen(void)
 
     screen->window = NULL;
     screen->renderer = NULL;
-    SDL_CreateWindowAndRenderer(224, 256, 0, &screen->window, &screen->renderer);
+    SDL_CreateWindowAndRenderer(448, 512, 0, &screen->window, &screen->renderer);
+    SDL_RenderSetLogicalSize(screen->renderer, 224, 256);
 
     if (!screen->window)
     {
@@ -69,7 +69,17 @@ Screen* InitScreen(void)
     }
 
     screen->keep_open = 1;
+
+    SDL_ShowCursor(SDL_DISABLE);
     return screen;
+}
+
+void DeleteScreen(Screen* screen)
+{
+    SDL_DestroyRenderer(screen->renderer);
+    SDL_DestroyWindow(screen->window);
+    free(screen);
+    SDL_Quit();
 }
 
 void RenderScreen(State8080* state, Screen* screen)
